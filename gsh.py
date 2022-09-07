@@ -7,29 +7,29 @@ def Tokenize(string):
     Quotes = 3
     Esc = False
     Token = ""
-    Tokens = []
+    Tokens = {}
     for char in list(string):
         if findQuote(char, "'", False, Esc or Quotes == 3):
             if Quotes == 3:
                 Quotes = 1
                 if Token != "":
-                    Tokens.append(Token)
+                    Tokens[len(Tokens) + 1] = [Token, False]
             else:
                 Quotes = 3
-                Tokens.append(f"'{Token}''")
+                Tokens[len(Tokens) + 1] = [f"'{Token}'", True]
             Token = ""
         elif findQuote(char, '"', False, Esc or Quotes == 1):
             if Quotes == 3:
                 Quotes = 2
                 if Token != "":
-                    Tokens.append(Token)
+                    Tokens[len(Tokens) + 1] = [Token, False]
             else:
                 Quotes = 3
-                Tokens.append(f'"{Token}"')
+                Tokens[len(Tokens) + 1] = [f'"{Token}"', True]
             Token = ""
         elif char.isspace() and Quotes == 3 and not Esc:
             if Token != "":
-                Tokens.append(Token)
+                Tokens[len(Tokens) + 1] = [Token, False]
             Token = ""
         elif (char != "\\") or (char == "\\" and Esc):
             Token  += char
@@ -38,7 +38,8 @@ def Tokenize(string):
     if Quotes != 3:
         return ""
     else:
-        Tokens.append(Token)
+        if Token != "":
+            Tokens[len(Tokens) + 1] = [Token, False]
         return Tokens
 
 def main():
